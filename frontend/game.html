@@ -33,6 +33,8 @@
             frameHeight: 32,
           });
           this.load.image("collision", "assets/collision.png");
+          this.load.image("roof1", "assets/rooftoop.png")
+          this.load.image("roof2", "assets/Rooftop2.1.png")
         }
 
         create() {
@@ -61,6 +63,10 @@
             .setScale(3.2);
 
           background.play("background");
+
+          this.roof = this.add.image(1251, 432, "roof1").setOrigin(0, 0).setDepth(10).setScale(.5); 
+          this.roof1 = this.add.image(334, 943, "roof2").setOrigin(0, 0).setDepth(10).setScale(.59); 
+          
 
           this.player = this.physics.add
             .sprite(this.startX, this.startY, "guy")
@@ -113,6 +119,7 @@
 
           this.collisionBlocks = this.physics.add.staticGroup();
 
+          this.roofTops = this
           // Door block
           this.collisionBlocks
             .create(495, 665, "collision")
@@ -197,11 +204,11 @@
 
           // CR House
           this.collisionBlocks
-            .create(1395, 610, "collision")
-            .setSize(100, 250)
+            .create(1395, 625, "collision")
+            .setSize(100, 200)
             .setOrigin(1, 1);
           this.collisionBlocks
-            .create(1320, 610, "collision")
+            .create(1320, 625, "collision")
             .setSize(100, 200)
             .setOrigin(1, 1);
 
