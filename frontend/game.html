@@ -1,459 +1,472 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Phaser</title>
-    <script src="//cdn.jsdelivr.net/npm/phaser@3.87.0/dist/phaser.js"></script>
-    <style type="text/css">
-      body {
-        margin: 0;
-      }
-    </style>
-  </head>
-  <body>
-    <script type="text/javascript">
-      class MainScene extends Phaser.Scene {
-        constructor() {
-          super({ key: "Main" });
-        }
 
-        init(data) {
-          // Defaults guy start position to 900/800 unless switching scene
-          this.startX = data && data.x ? data.x : 900; // Default to 900 if no position passed
-          this.startY = data && data.y ? data.y : 800; // Default to 800 if no position passed
-        }
+<head>
+  <meta charset="UTF-8" />
+  <title>Phaser</title>
+  <script src="//cdn.jsdelivr.net/npm/phaser@3.87.0/dist/phaser.js"></script>
+  <style type="text/css">
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
 
-        preload() {
-          this.load.spritesheet("background", "assets/background.png", {
-            frameWidth: 630,
-            frameHeight: 500,
-          });
-          this.load.spritesheet("guy", "assets/guy.png", {
-            frameWidth: 32,
-            frameHeight: 32,
-          });
-          this.load.image("collision", "assets/collision.png");
-        }
-
-        create() {
-          this.anims.create({
-            key: "guyidle",
-            frames: this.anims.generateFrameNumbers("guy", {
-              start: 0,
-              end: 0,
-            }),
-            frameRate: 1,
-          });
-
-          this.anims.create({
-            key: "background",
-            frames: this.anims.generateFrameNumbers("background", {
-              start: 0,
-              end: 79,
-            }),
-            frameRate: 8,
-            repeat: -1,
-          });
-
-          const background = this.add
-            .sprite(0, 0, "background")
-            .setOrigin(0, 0)
-            .setScale(3.2);
-
-          background.play("background");
-
-          this.player = this.physics.add
-            .sprite(this.startX, this.startY, "guy")
-            .setSize(18, 10)
-            .setScale(2.5)
-            .setOrigin(0, 0)
-            .setOffset(6.5, 14);
-
-          this.player.setCollideWorldBounds(true);
-
-          this.anims.create({
-            key: "left",
-            frames: this.anims.generateFrameNumbers("guy", {
-              start: 24,
-              end: 29,
-            }),
-            frameRate: 10,
-            repeat: -1,
-          });
-
-          this.anims.create({
-            key: "right",
-            frames: this.anims.generateFrameNumbers("guy", {
-              start: 24,
-              end: 29,
-            }),
-            frameRate: 10,
-            repeat: -1,
-          });
-
-          this.anims.create({
-            key: "up",
-            frames: this.anims.generateFrameNumbers("guy", {
-              start: 30,
-              end: 35,
-            }),
-            frameRate: 10,
-            repeat: -1,
-          });
-
-          this.anims.create({
-            key: "down",
-            frames: this.anims.generateFrameNumbers("guy", {
-              start: 18,
-              end: 23,
-            }),
-            frameRate: 10,
-            repeat: -1,
-          });
-
-          this.collisionBlocks = this.physics.add.staticGroup();
-
-          // Door block
-          this.collisionBlocks
-            .create(495, 665, "collision")
-            .setSize(40, 60)
-            .setOrigin(1, 1); // House door TL
-
-
-
-            this.collisionBlocks
-            .create(1315, 695, "collision")
-            .setSize(40, 60)
-            .setOrigin(1, 1); // House door TR
-
-          // Player to door teleport
-          this.physics.add.collider(
-            this.player,
-            this.collisionBlocks,
-            function (player, doorArea) {
-              if (doorArea === this.collisionBlocks.getChildren()[0]) {
-                console.log("You are close to the house door!");
-                this.scene.start("House"); // Switch to House
-              }
-            },
-            null,
-            this
-          );
-
-          // Player to door teleport
-          this.physics.add.collider(
-            this.player,
-            this.collisionBlocks,
-            function (player, doorArea) {
-              if (doorArea === this.collisionBlocks.getChildren()[0]) {
-                console.log("You are close to the house door!");
-                this.scene.start("House"); // Switch to House
-              }
-            },
-            null,
-            this
-          );
-
-          // Collision Blocks
-
-          this.collisionBlocks
-            .create(690, 1500, "collision")
-            .setSize(10, 500)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(0, 1200, "collision")
-            .setSize(280, 1)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(420, 1200, "collision")
-            .setSize(400, 1)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(720, 1180, "collision")
-            .setSize(10, 205)
-            .setOrigin(1, 1);
-
-          // TR Fencing
-          this.collisionBlocks
-            .create(1510, 530, "collision")
-            .setSize(10, 445)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(1870, 530, "collision")
-            .setSize(10, 445)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(1700, 330, "collision")
-            .setSize(300, 10)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(1600, 750, "collision")
-            .setSize(150, 10)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(1810, 750, "collision")
-            .setSize(100, 10)
-            .setOrigin(1, 1);
-
-          // CR House
-          this.collisionBlocks
-            .create(1395, 610, "collision")
-            .setSize(100, 250)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(1320, 610, "collision")
-            .setSize(100, 200)
-            .setOrigin(1, 1);
-
-          // CL House
-          this.collisionBlocks
-            .create(175, 820, "collision")
-            .setSize(180, 250)
-            .setOrigin(1, 1);
-
-          // BL House
-          this.collisionBlocks
-            .create(550, 1200, "collision")
-            .setSize(300, 150)
-            .setOrigin(1, 1);
-
-          // TOP House
-          this.collisionBlocks
-            .create(1235, 250, "collision")
-            .setSize(100, 250)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(1165, 245, "collision")
-            .setSize(100, 200)
-            .setOrigin(1, 1);
-          // Horse's House
-          this.collisionBlocks
-            .create(1260, 1050, "collision")
-            .setSize(190, 200)
-            .setOrigin(1, 1);
-
-          // Fountain
-          this.collisionBlocks
-            .create(999, 900, "collision")
-            .setSize(85, 60)
-            .setOrigin(1, 1);
-
-          // TL House
-          this.collisionBlocks
-            .create(605, 540, "collision")
-            .setSize(335, 180)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(570, 670, "collision")
-            .setSize(80, 50)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(450, 665, "collision")
-            .setSize(20, 70)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(500, 645, "collision")
-            .setSize(80, 30)
-            .setOrigin(1, 1); // House door
-
-          // TL House Wall
-          this.collisionBlocks
-            .create(275, 560, "collision")
-            .setSize(1, 150)
-            .setOrigin(1, 1); // Left Wall
-          this.collisionBlocks
-            .create(320, 460, "collision")
-            .setSize(1, 40)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(380, 400, "collision")
-            .setSize(1, 30)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(350, 430, "collision")
-            .setSize(10, 1)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(317, 670, "collision")
-            .setSize(1, 50)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(480, 800, "collision")
-            .setSize(230, 1)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(350, 750, "collision")
-            .setSize(1, 100)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(730, 800, "collision")
-            .setSize(100, 1)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(800, 740, "collision")
-            .setSize(0, 100)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(860, 690, "collision")
-            .setSize(80, 1)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(900, 630, "collision")
-            .setSize(1, 120)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(900, 450, "collision")
-            .setSize(1, 120)
-            .setOrigin(1, 1);
-          this.collisionBlocks
-            .create(635, 375, "collision")
-            .setSize(480, 1)
-            .setOrigin(1, 1);
-
-          // Change to true to see collision blocks
-          this.collisionBlocks.children.iterate((child) => {
-            child.setVisible(false);
-          });
-
-          // Player & Collision Blocks collide
-          this.physics.add.collider(this.player, this.collisionBlocks);
-
-          // World bounds and camera
-          this.physics.world.setBounds(0, 0, 2000, 1600);
-          this.cameras.main.setBounds(0, 0, 2000, 1600);
-          this.cameras.main.startFollow(this.player);
-
-          this.cursors = this.input.keyboard.createCursorKeys();
-        }
-
-        update() {
-          this.player.setVelocity(0);
-
-          if (this.cursors.left.isDown) {
-            this.player.setVelocityX(-160);
-            this.player.anims.play("right", true);
-            this.player.setFlipX(true);
-          } else if (this.cursors.right.isDown) {
-            this.player.setVelocityX(160);
-            this.player.anims.play("right", true);
-            this.player.setFlipX(false);
-          }
-
-          if (this.player.body.velocity.x === 0) {
-            if (this.cursors.up.isDown) {
-              this.player.setVelocityY(-160);
-              this.player.anims.play("up", true);
-            } else if (this.cursors.down.isDown) {
-              this.player.setVelocityY(160);
-              this.player.anims.play("down", true);
-            }
-          }
-
-          if (
-            this.player.body.velocity.x === 0 &&
-            this.player.body.velocity.y === 0
-          ) {
-            this.player.anims.play("guyidle", true);
-          }
-        }
+<body>
+  <script type="text/javascript">
+    class MainScene extends Phaser.Scene {
+      constructor() {
+        super({ key: "Main" });
       }
 
-      class HouseScene extends Phaser.Scene {
-        constructor() {
-          super({ key: "House" });
-        }
-
-        preload() {
-          this.load.image("house2", "assets/house2.png");
-          this.load.spritesheet("guy", "assets/guy.png", {
-            frameWidth: 32,
-            frameHeight: 32,
-          });
-        }
-
-        create() {
-          this.cursors = this.input.keyboard.createCursorKeys();
-
-          // House image
-          this.add.image(0, 0, "house2").setOrigin(0, 0).setScale(0.5);
-
-          this.player = this.physics.add
-            .sprite(200, 300, "guy")
-            .setSize(18, 10)
-            .setScale(3.5)
-            .setOrigin(0, 0)
-            .setOffset(6.5, 14);
-
-          this.player.setCollideWorldBounds(true);
-
-          // Add house door collision area
-          this.doorArea = this.physics.add.staticGroup();
-          this.doorArea.create(250, 160, "collision").setSize(50, 70);
-
-          this.physics.add.collider(
-            this.player,
-            this.doorArea,
-            function (player, doorArea) {
-              console.log("You are at the door!");
-              this.scene.start("Main", { x: 500, y: 685 });
-            },
-            null,
-            this
-          );
-
-      
-          this.physics.world.setBounds(0, 0, 500, 800);
-          this.cameras.main.setBounds(0, 0, 500, 800);
-          
-        }
-
-        update() {
-          this.player.setVelocity(0);
-
-          if (this.cursors.left.isDown) {
-            this.player.setVelocityX(-160);
-            this.player.anims.play("right", true);
-            this.player.setFlipX(true);
-          } else if (this.cursors.right.isDown) {
-            this.player.setVelocityX(160);
-            this.player.anims.play("right", true);
-            this.player.setFlipX(false);
-          }
-
-          if (this.player.body.velocity.x === 0) {
-            if (this.cursors.up.isDown) {
-              this.player.setVelocityY(-160);
-              this.player.anims.play("up", true);
-            } else if (this.cursors.down.isDown) {
-              this.player.setVelocityY(160);
-              this.player.anims.play("down", true);
-            }
-          }
-
-          if (
-            this.player.body.velocity.x === 0 &&
-            this.player.body.velocity.y === 0
-          ) {
-            this.player.anims.play("guyidle", true);
-          }
-        }
+      init(data) {
+        // Defaults guy start position to 900/800 unless switching scene
+        this.startX = data && data.x ? data.x : 900; // Default to 900 if no position passed
+        this.startY = data && data.y ? data.y : 800; // Default to 800 if no position passed
       }
 
-      // Game configuration
-      var config = {
-        type: Phaser.AUTO,
-        width: 1000,
-        height: 600,
-        physics: {
-          default: "arcade",
-          arcade: {
-            debug: true, // Set to true to debug/see hitboxes
+      preload() {
+        this.load.spritesheet("background", "assets/background.png", {
+          frameWidth: 630,
+          frameHeight: 500,
+        });
+        this.load.spritesheet("guy", "assets/Guy.png", {
+          frameWidth: 32,
+          frameHeight: 32,
+        });
+        this.load.image("collision", "assets/collision.png");
+        this.load.audio("backgroundMusic", "assets/Insistent.ogg"); // Background music
+        this.load.audio("doorOpen", "assets/door.1.ogg"); // Door opening sound
+      }
+
+      create() {
+        this.anims.create({
+          key: "guyidle",
+          frames: this.anims.generateFrameNumbers("guy", {
+            start: 0,
+            end: 0,
+          }),
+          frameRate: 1,
+        });
+
+        this.anims.create({
+          key: "background",
+          frames: this.anims.generateFrameNumbers("background", {
+            start: 0,
+            end: 79,
+          }),
+          frameRate: 8,
+          repeat: -1,
+        });
+
+        const background = this.add
+          .sprite(0, 0, "background")
+          .setOrigin(0, 0)
+          .setScale(3.2);
+
+        background.play("background");
+
+        this.player = this.physics.add
+          .sprite(this.startX, this.startY, "guy")
+          .setSize(18, 10)
+          .setScale(2.5)
+          .setOrigin(0, 0)
+          .setOffset(6.5, 14);
+
+        this.player.setCollideWorldBounds(true);
+
+        this.anims.create({
+          key: "left",
+          frames: this.anims.generateFrameNumbers("guy", {
+            start: 24,
+            end: 29,
+          }),
+          frameRate: 10,
+          repeat: -1,
+        });
+
+        this.anims.create({
+          key: "right",
+          frames: this.anims.generateFrameNumbers("guy", {
+            start: 24,
+            end: 29,
+          }),
+          frameRate: 10,
+          repeat: -1,
+        });
+
+        this.anims.create({
+          key: "up",
+          frames: this.anims.generateFrameNumbers("guy", {
+            start: 30,
+            end: 35,
+          }),
+          frameRate: 10,
+          repeat: -1,
+        });
+
+        this.anims.create({
+          key: "down",
+          frames: this.anims.generateFrameNumbers("guy", {
+            start: 18,
+            end: 23,
+          }),
+          frameRate: 10,
+          repeat: -1,
+        });
+
+        this.collisionBlocks = this.physics.add.staticGroup();
+
+        // Door block
+        this.collisionBlocks
+          .create(495, 665, "collision")
+          .setSize(40, 60)
+          .setOrigin(1, 1); // House door TL
+
+
+
+        this.collisionBlocks
+          .create(1315, 695, "collision")
+          .setSize(40, 60)
+          .setOrigin(1, 1); // House door TR
+
+        //initialize the door sound
+        this.doorOpenSound = this.sound.add("doorOpen", { volume: 0.5 });
+        // Player to door teleport
+        this.physics.add.collider(
+          this.player,
+          this.collisionBlocks.getChildren()[0], // First door block
+          (player, doorArea) => {
+            console.log("You are close to the house door!");
+            this.doorOpenSound.play(); // Play door open sound
+            console.log("Sound played");
+            this.time.delayedCall(500,
+              () => {
+                this.scene.start("House"); // Switch to House scene after delay
+              },
+              [],
+              this
+            );
           },
-        },
-        scene: [MainScene, HouseScene],
-      };
+          null,
+          this
+        );
 
-      var game = new Phaser.Game(config);
-    </script>
-  </body>
+        // Collision Blocks
+
+        this.collisionBlocks
+          .create(690, 1500, "collision")
+          .setSize(10, 500)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(0, 1200, "collision")
+          .setSize(280, 1)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(420, 1200, "collision")
+          .setSize(400, 1)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(720, 1180, "collision")
+          .setSize(10, 205)
+          .setOrigin(1, 1);
+
+        // TR Fencing
+        this.collisionBlocks
+          .create(1510, 530, "collision")
+          .setSize(10, 445)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(1870, 530, "collision")
+          .setSize(10, 445)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(1700, 330, "collision")
+          .setSize(300, 10)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(1600, 750, "collision")
+          .setSize(150, 10)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(1810, 750, "collision")
+          .setSize(100, 10)
+          .setOrigin(1, 1);
+
+        // CR House
+        this.collisionBlocks
+          .create(1395, 610, "collision")
+          .setSize(100, 250)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(1320, 610, "collision")
+          .setSize(100, 200)
+          .setOrigin(1, 1);
+
+        // CL House
+        this.collisionBlocks
+          .create(175, 820, "collision")
+          .setSize(180, 250)
+          .setOrigin(1, 1);
+
+        // BL House
+        this.collisionBlocks
+          .create(550, 1200, "collision")
+          .setSize(300, 150)
+          .setOrigin(1, 1);
+
+        // TOP House
+        this.collisionBlocks
+          .create(1235, 250, "collision")
+          .setSize(100, 250)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(1165, 245, "collision")
+          .setSize(100, 200)
+          .setOrigin(1, 1);
+        // Horse's House
+        this.collisionBlocks
+          .create(1260, 1050, "collision")
+          .setSize(190, 200)
+          .setOrigin(1, 1);
+
+        // Fountain
+        this.collisionBlocks
+          .create(999, 900, "collision")
+          .setSize(85, 60)
+          .setOrigin(1, 1);
+
+        // TL House
+        this.collisionBlocks
+          .create(605, 540, "collision")
+          .setSize(335, 180)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(570, 670, "collision")
+          .setSize(80, 50)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(450, 665, "collision")
+          .setSize(20, 70)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(500, 645, "collision")
+          .setSize(80, 30)
+          .setOrigin(1, 1); // House door
+
+        // TL House Wall
+        this.collisionBlocks
+          .create(275, 560, "collision")
+          .setSize(1, 150)
+          .setOrigin(1, 1); // Left Wall
+        this.collisionBlocks
+          .create(320, 460, "collision")
+          .setSize(1, 40)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(380, 400, "collision")
+          .setSize(1, 30)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(350, 430, "collision")
+          .setSize(10, 1)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(317, 670, "collision")
+          .setSize(1, 50)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(480, 800, "collision")
+          .setSize(230, 1)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(350, 750, "collision")
+          .setSize(1, 100)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(730, 800, "collision")
+          .setSize(100, 1)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(800, 740, "collision")
+          .setSize(0, 100)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(860, 690, "collision")
+          .setSize(80, 1)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(900, 630, "collision")
+          .setSize(1, 120)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(900, 450, "collision")
+          .setSize(1, 120)
+          .setOrigin(1, 1);
+        this.collisionBlocks
+          .create(635, 375, "collision")
+          .setSize(480, 1)
+          .setOrigin(1, 1);
+
+        // Change to true to see collision blocks
+        this.collisionBlocks.children.iterate((child) => {
+          child.setVisible(false);
+        });
+
+        // Player & Collision Blocks collide
+        this.physics.add.collider(this.player, this.collisionBlocks);
+
+        // World bounds and camera
+        this.physics.world.setBounds(0, 0, 2000, 1600);
+        this.cameras.main.setBounds(0, 0, 2000, 1600);
+        this.cameras.main.startFollow(this.player);
+
+        this.cursors = this.input.keyboard.createCursorKeys();
+
+        // Play background music
+        this.backgroundMusic = this.sound.add("backgroundMusic", { loop: true, volume: 0.1 });
+        this.backgroundMusic.play();
+      }
+
+      update() {
+        this.player.setVelocity(0);
+
+        if (this.cursors.left.isDown) {
+          this.player.setVelocityX(-160);
+          this.player.anims.play("right", true);
+          this.player.setFlipX(true);
+        } else if (this.cursors.right.isDown) {
+          this.player.setVelocityX(160);
+          this.player.anims.play("right", true);
+          this.player.setFlipX(false);
+        }
+
+        if (this.player.body.velocity.x === 0) {
+          if (this.cursors.up.isDown) {
+            this.player.setVelocityY(-160);
+            this.player.anims.play("up", true);
+          } else if (this.cursors.down.isDown) {
+            this.player.setVelocityY(160);
+            this.player.anims.play("down", true);
+          }
+        }
+
+        if (
+          this.player.body.velocity.x === 0 &&
+          this.player.body.velocity.y === 0
+        ) {
+          this.player.anims.play("guyidle", true);
+        }
+      }
+    }
+
+    class HouseScene extends Phaser.Scene {
+  constructor() {
+    super({ key: "House" });
+  }
+
+  preload() {
+    this.load.image("house2", "assets/house2.png");
+    this.load.spritesheet("guy", "assets/guy.png", {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+  }
+
+  create() {
+    this.cursors = this.input.keyboard.createCursorKeys();
+
+    // House image
+    this.add.image(0, 0, "house2").setOrigin(0, 0).setScale(0.5);
+
+    this.player = this.physics.add
+      .sprite(200, 300, "guy")
+      .setSize(18, 10)
+      .setScale(3.5)
+      .setOrigin(0, 0)
+      .setOffset(6.5, 14);
+
+    this.player.setCollideWorldBounds(true);
+
+    // Add house door collision area
+    this.doorArea = this.physics.add.staticGroup();
+    this.doorArea.create(250, 160, "collision").setSize(50, 70);
+
+    // Initialize the door sound
+    this.doorOpenSound = this.sound.add("doorOpen", { volume: 0.5 });
+
+    this.physics.add.collider(
+      this.player,
+      this.doorArea,
+      function (player, doorArea) {
+        console.log("You are at the door!");
+        this.doorOpenSound.play(); // Play the door sound
+        this.time.delayedCall(
+          500,
+          () => {
+            this.scene.start("Main", { x: 500, y: 685 });
+          },
+          [],
+          this
+        );
+      },
+      null,
+      this
+    );
+
+    this.physics.world.setBounds(0, 0, 500, 800);
+    this.cameras.main.setBounds(0, 0, 500, 800);
+  }
+
+  update() {
+    this.player.setVelocity(0);
+
+    if (this.cursors.left.isDown) {
+      this.player.setVelocityX(-160);
+      this.player.anims.play("right", true);
+      this.player.setFlipX(true);
+    } else if (this.cursors.right.isDown) {
+      this.player.setVelocityX(160);
+      this.player.anims.play("right", true);
+      this.player.setFlipX(false);
+    }
+
+    if (this.player.body.velocity.x === 0) {
+      if (this.cursors.up.isDown) {
+        this.player.setVelocityY(-160);
+        this.player.anims.play("up", true);
+      } else if (this.cursors.down.isDown) {
+        this.player.setVelocityY(160);
+        this.player.anims.play("down", true);
+      }
+    }
+
+    if (
+      this.player.body.velocity.x === 0 &&
+      this.player.body.velocity.y === 0
+    ) {
+      this.player.anims.play("guyidle", true);
+    }
+  }
+}
+
+
+    // Game configuration
+    var config = {
+      type: Phaser.AUTO,
+      width: 1000,
+      height: 600,
+      physics: {
+        default: "arcade",
+        arcade: {
+          debug: true, // Set to true to debug/see hitboxes
+        },
+      },
+      scene: [MainScene, HouseScene],
+    };
+
+    var game = new Phaser.Game(config);
+  </script>
+</body>
+
 </html>
