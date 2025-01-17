@@ -92,37 +92,37 @@ export default class CollisionBlocks {
       .setVisible(false);
     //Hut
     this.collisionBlocks
-    .create(1695, 955, "collision")
-    .setSize(100, 115)
-    .setOrigin(1, 1)
-    .setVisible(false);
+      .create(1695, 955, "collision")
+      .setSize(100, 115)
+      .setOrigin(1, 1)
+      .setVisible(false);
 
-  //Pole
-  this.collisionBlocks
-    .create(572, 940, "collision")
-    .setSize(10, 10)
-    .setOrigin(1, 1)
-    .setVisible(false);
+    //Pole
+    this.collisionBlocks
+      .create(572, 940, "collision")
+      .setSize(10, 10)
+      .setOrigin(1, 1)
+      .setVisible(false);
 
-  550, 841
+    550, 841;
     //Bench
     this.collisionBlocks
-    .create(1215, 790, "collision")
-    .setSize(90, 20)
-    .setOrigin(1, 1)
-    .setVisible(false);
+      .create(1215, 790, "collision")
+      .setSize(90, 20)
+      .setOrigin(1, 1)
+      .setVisible(false);
     // Fountain
     this.collisionBlocks
       .create(999, 900, "collision")
       .setSize(85, 60)
       .setOrigin(1, 1)
       .setVisible(false);
-      this.collisionBlocks
+    this.collisionBlocks
       .create(999, 875, "collision")
       .setSize(90, 10)
       .setOrigin(1, 1)
       .setVisible(false);
-      this.collisionBlocks
+    this.collisionBlocks
       .create(999, 869, "collision")
       .setSize(50, 10)
       .setOrigin(1, 1)
@@ -220,13 +220,13 @@ export default class CollisionBlocks {
       .setOrigin(1, 1)
       .setVisible(false);
 
-    //wishingWell 
-    1120, 535
+    //wishingWell
+    1120, 535;
     this.collisionBlocks
-    .create(1178, 640, "collision")
-    .setSize(50, 30)
-    .setOrigin(1, 1)
-    .setVisible(false);
+      .create(1178, 640, "collision")
+      .setSize(50, 30)
+      .setOrigin(1, 1)
+      .setVisible(false);
 
     // Water Boundaries
     this.collisionBlocks
