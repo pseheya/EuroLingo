@@ -1,5 +1,7 @@
 Project Name: EuroLingo
 
+Deployed Version: https://eurolingo.netlify.app/
+
 Project Description
 EuroLingo is a comprehensive language learning application designed to make learning languages engaging and effective. It combines interactive features on the frontend with a robust backend to deliver a seamless user experience.
 
