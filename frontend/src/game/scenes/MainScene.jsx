@@ -6,12 +6,11 @@ export class MainScene extends Phaser.Scene {
   constructor() {
     super({ key: "Main" });
     this.userProgress = null;
-    this.username = null; 
+    this.username = null;
   }
 
   init(data) {
-  
-    this.startX = data && data.x ? data.x : 900; 
+    this.startX = data && data.x ? data.x : 900;
     this.startY = data && data.y ? data.y : 800;
 
     this.username = this.game.registry.get("username") || data?.username;
@@ -48,8 +47,7 @@ export class MainScene extends Phaser.Scene {
             .setScrollFactor(0);
         }
       });
-    } catch (err) {
-    }
+    } catch (err) {}
   }
 
   preload() {
@@ -131,10 +129,9 @@ export class MainScene extends Phaser.Scene {
     const background = this.add
       .sprite(0, 0, "background")
       .setOrigin(0, 0)
-      .setScale(3.2); 
+      .setScale(3.2);
 
     background.play("background");
-
 
     this.roof = this.add
       .image(1251, 432, "roof1")
@@ -244,8 +241,8 @@ export class MainScene extends Phaser.Scene {
     this.player = this.physics.add
       .sprite(this.startX, this.startY, "guy")
       .setSize(18, 10)
-      .setScale(2.5) 
-      .setOrigin(0, 0) 
+      .setScale(2.5)
+      .setOrigin(0, 0)
       .setOffset(6.5, 14);
 
     this.player.setCollideWorldBounds(true);
@@ -299,44 +296,44 @@ export class MainScene extends Phaser.Scene {
     const door1 = this.doorArea
       .create(495, 665, "collision")
       .setSize(40, 60)
-      .setOrigin(1, 1); 
+      .setOrigin(1, 1);
     door1.visible = false;
-    door1.setData("targetScene", "House1");
+    door1.setData("targetScene", "ItalianHouse");
 
     const door2 = this.doorArea
       .create(1161, 355, "collision")
       .setSize(40, 60)
-      .setOrigin(1, 1); 
+      .setOrigin(1, 1);
     door2.visible = false;
-    door2.setData("targetScene", "House2");
+    door2.setData("targetScene", "SpanishHouse");
 
     const door3 = this.doorArea
       .create(1315, 700, "collision")
       .setSize(40, 60)
-      .setOrigin(1, 1); 
+      .setOrigin(1, 1);
     door3.visible = false;
-    door3.setData("targetScene", "House3");
+    door3.setData("targetScene", "GermanHouse");
 
     const door4 = this.doorArea
       .create(1225, 1125, "collision")
       .setSize(40, 60)
-      .setOrigin(1, 1); 
+      .setOrigin(1, 1);
     door4.visible = false;
-    door4.setData("targetScene", "House4");
+    door4.setData("targetScene", "UkrainianHouse");
 
     const door5 = this.doorArea
       .create(535, 1270, "collision")
       .setSize(40, 60)
       .setOrigin(1, 1);
     door5.visible = false;
-    door5.setData("targetScene", "House5");
+    door5.setData("targetScene", "FrenchHouse");
 
     const teleport = this.teleport
       .create(1985, 850, "collision")
       .setSize(50, 40)
       .setOrigin(1, 1);
     teleport.visible = false;
-    teleport.setData("targetScene", "BridgeScene"); 
+    teleport.setData("targetScene", "BridgeScene");
 
     this.doorOpenSound = this.sound.add("doorOpen", { volume: 0.2 });
 
@@ -347,14 +344,13 @@ export class MainScene extends Phaser.Scene {
         const targetScene = doorArea.getData("targetScene");
         if (targetScene) {
           this.doorOpenSound.play();
-          this.scene.start(targetScene)
+          this.scene.start(targetScene);
         }
       },
       null,
       this
     );
 
- 
     this.physics.add.overlap(
       this.player,
       this.teleport,
@@ -362,14 +358,14 @@ export class MainScene extends Phaser.Scene {
         if (!this.userProgress) {
           return;
         }
-      
+
         const completedLanguages = this.userProgress.filter(
           (language) => Object.values(language)[0] === true
         ).length;
 
         if (completedLanguages === 5) {
           const targetScene = teleport.getData("targetScene");
-          this.scene.start(targetScene, { x: 100, y: 270 })
+          this.scene.start(targetScene, { x: 100, y: 270 });
         } else {
           this.add.text(1780, 770, "Collect all 5 badges first!", {
             font: "20px Montserrat",

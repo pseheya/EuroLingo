@@ -1,9 +1,26 @@
 import Phaser from "phaser";
 import HouseCollisionBlocks from "../imports/houseCollisionBlocks";
+import House2CollisionBlocks from "../imports/house2CollisionBlocks";
 
-class HouseScene1 extends Phaser.Scene {
-  constructor() {
-    super({ key: "House1" });
+class HouseBase extends Phaser.Scene {
+  constructor(
+    key,
+    language = "",
+    country = "",
+    musicFile = "",
+    houseImage = "",
+    position = {}
+  ) {
+    super({ key });
+
+    this.player = null;
+    this.country = country;
+    this.backgroundMusic = null;
+    this.houseImage = houseImage;
+    this.musicFile = musicFile;
+    this.language = language;
+    this.position = position;
+
     this.leftWords = [];
     this.rightWords = [];
     this.matchedPairs = [];
@@ -15,7 +32,10 @@ class HouseScene1 extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("house2", "assets/house2.png");
+    if (this.musicFile) {
+      this.load.audio(this.key + this.language, this.musicFile);
+    }
+
     this.load.spritesheet("guy", "assets/guy.png", {
       frameWidth: 32,
       frameHeight: 32,
@@ -26,69 +46,67 @@ class HouseScene1 extends Phaser.Scene {
       frameHeight: 16,
     });
 
+    this.load.audio("italy", "assets/italySong.mp3");
+    this.load.audio("spain", "assets/spainSong.mp3");
+    this.load.audio("gerSong", "assets/gerSong.mp3");
+    this.load.audio("ukrSong", "assets/ukrSong.mp3");
+    this.load.audio("frrSong", "assets/frrSong.mp3");
+
+    this.load.image("house2", "assets/house2.png");
+    this.load.image("house1", "assets/house1.png");
     this.load.image("exMark", "assets/Look_At_Me.png");
     this.load.image("collision", "assets/collision.png");
     this.load.image("rome", "assets/rome.png");
-    this.load.audio("italy", "assets/italySong.mp3");
     this.doorOpenSound = this.sound.add("doorOpen", { volume: 0.2 });
     this.load.image("guide", "assets/Guide.png");
     this.load.image("journal", "assets/Learn_Journal.png");
     this.load.image("back", "assets/Back_BTN.png");
-    this.load.image("test", "assets/Ukr_Congrats.png");
     this.load.image("speech", "assets/Speech Bubble.png");
   }
 
   create() {
     this.welcomeFunction();
 
-    const backgroundMusic = this.sound.get("backgroundMusic");
-    if (backgroundMusic) {
-      backgroundMusic.stop();
+    const gameWidth = this.scale.width;
+    const gameHeight = this.scale.height;
+    //set up an music block
+    if (this.sound.get("backgroundMusic")) {
+      this.sound.stopAll(); // Stops all sounds, including lingering background music
     }
 
-    if (!this.sound.get("italy")) {
-      this.backgroundMusic = this.sound.add("italy", {
+    // Play the background music for this specific house
+    if (this.musicFile) {
+      this.backgroundMusic = this.sound.add(this.key + this.language, {
         loop: true,
         volume: 0.1,
       });
       this.backgroundMusic.play();
-    } else {
-      const backgroundMusic = this.sound.get("italy");
-      if (!backgroundMusic.isPlaying) {
-        backgroundMusic.play();
-      }
     }
 
-    this.cursors = this.input.keyboard.createCursorKeys();
-
-    const gameWidth = this.scale.width;
-    const gameHeight = this.scale.height;
+    //set houseImage
     const houseImage = this.add
-      .image(gameWidth / 2, gameHeight / 2, "house2")
+      .image(gameWidth / 2, gameHeight / 2, this.houseImage)
       .setOrigin(0.5, 0.5)
       .setScale(0.5);
-
+    //create player
     this.player = this.physics.add
-      .sprite(350, 300, "guy")
-      .setSize(18, 10)
+      .sprite(this.position.playerX || 350, this.position.playerY || 300, "guy")
       .setScale(3.5)
+      .setSize(18, 10)
       .setOrigin(0, 0)
       .setOffset(6.5, 14);
-
-    this.rome = this.add
-      .image(575, 133, "rome")
-      .setOrigin(0, 0)
-      .setAlpha(0.9)
-      .setScale(0.1);
-
-    this.add.image(320, 290, "guide").setDepth(3).setScale(0.18).setAlpha(0.8);
-
+    //guide area
+    this.add
+      .image(this.position.guideX, this.position.guideY, "guide")
+      .setDepth(3)
+      .setScale(0.18)
+      .setAlpha(0.8);
     this.guideArea = this.physics.add.staticGroup();
+
     const guideCollision = this.guideArea
-      .create(320, 290, "collision")
+      .create(this.position.guideX, this.position.guideY, "collision")
       .setSize(50, 50);
     guideCollision.setAlpha(0);
-
     this.physics.add.collider(
       this.player,
       guideCollision,
@@ -97,35 +115,76 @@ class HouseScene1 extends Phaser.Scene {
       this
     );
 
+    //speach and reminder
+
     this.player.setCollideWorldBounds(true);
+    this.cursors = this.input.keyboard.createCursorKeys();
 
-    const houseCollisionBlocks = new HouseCollisionBlocks(this);
-    const houseCollisionGroup = houseCollisionBlocks.getHouseBlocks();
-    this.physics.add.collider(this.player, houseCollisionGroup);
+    //house collision block
 
-    this.doorArea = this.physics.add.staticGroup();
-    const houseDoor = this.doorArea
-      .create(470, 160, "collision")
-      .setSize(30, 70);
-    houseDoor.visible = false;
+    if (this.houseImage === "house2") {
+      const houseCollisionBlocks = new HouseCollisionBlocks(this);
+      const houseCollisionGroup = houseCollisionBlocks.getHouseBlocks();
+      this.physics.add.collider(this.player, houseCollisionGroup);
 
-    this.physics.add.collider(
-      this.player,
-      this.doorArea,
-      function (player, doorArea) {
-        this.doorOpenSound.play();
-        this.scene.start("Main", { x: 500, y: 685 });
-        this.countMatches = 0;
-      },
+      this.doorArea = this.physics.add.staticGroup();
+      const houseDoor = this.doorArea
+        .create(470, 160, "collision")
+        .setSize(30, 70);
+      houseDoor.visible = false;
+      this.physics.add.collider(
+        this.player,
+        this.doorArea,
+        function (player, doorArea) {
+          this.doorOpenSound.play();
+          this.scene.start("Main", {
+            x: this.position.mainX,
+            y: this.position.mainY,
+          });
+          this.countMatches = 0;
+        },
 
-      null,
-      this
-    );
+        null,
+        this
+      );
+    }
+    if (this.houseImage === "house1") {
+      const house2CollisionBlocks = new House2CollisionBlocks(this);
+      const house2CollisionGroup = house2CollisionBlocks.getHouse2Blocks();
+      this.physics.add.collider(this.player, house2CollisionGroup);
+
+      this.doorArea = this.physics.add.staticGroup();
+      const houseDoor = this.doorArea
+        .create(613, 205, "collision")
+        .setSize(10, 70);
+      houseDoor.visible = false;
+
+      this.physics.add.collider(
+        this.player,
+        this.doorArea,
+        function (player, doorArea) {
+          this.doorOpenSound.play();
+          this.scene.start("Main", {
+            x: this.position.mainX,
+            y: this.position.mainY,
+          });
+          this.countMatches = 0;
+        },
+        null,
+        this
+      );
+    }
+
+    //chest and books mark
 
     this.chestOpened = false;
 
     this.Book_exMark = this.physics.add
-      .staticSprite(320, 370, "exMark")
+      .staticSprite(
+        this.position.boolExMarkX,
+        this.position.bookExMarkY,
+        "exMark"
+      )
       .setScale(0.06)
       .refreshBody();
     this.physics.add.collider(
@@ -152,6 +211,7 @@ class HouseScene1 extends Phaser.Scene {
       this
     );
     this.journalTriggered = false;
+
     this.anims.create({
       key: "openChest",
       frames: this.anims.generateFrameNumbers("chest", { start: 0, end: 5 }),
@@ -159,10 +219,11 @@ class HouseScene1 extends Phaser.Scene {
       repeat: 0,
     });
 
-    this.physics.world.setBounds(0, 0, 735, 800);
+    this.physics.world.setBounds(0, 0, 725, 800);
     this.cameras.main.setBounds(0, 0, 800, 800);
   }
 
+  //welcome function and count
   welcomeFunction() {
     if (this.reminder && this.speech) {
       this.reminder.destroy();
@@ -171,19 +232,24 @@ class HouseScene1 extends Phaser.Scene {
 
     if (this.roundCount > 4) {
       this.speech = this.add
-        .image(420, 200, "speech")
+        .image(this.position.speachX, this.position.speachY, "speech")
         .setScale(0.15)
         .setDepth(9);
       this.reminder = this.add
-        .text(310, 154, `Hey!\nYou comleted this house!`, {
-          fontSize: "18px",
-          color: "#ffffff",
-          align: "center",
-          padding: {
-            x: 10,
-            y: 5,
-          },
-        })
+        .text(
+          this.position.reminderX,
+          this.position.reminderY,
+          `Hey!\nYou comleted this house!`,
+          {
+            fontSize: "18px",
+            color: "#ffffff",
+            align: "center",
+            padding: {
+              x: 10,
+              y: 5,
+            },
+          }
+        )
         .setDepth(10);
       this.time.delayedCall(3000, () => {
         if (this.reminder && this.speech) {
@@ -196,19 +262,24 @@ class HouseScene1 extends Phaser.Scene {
 
     if (this.roundCount === 4) {
       this.speech = this.add
-        .image(420, 200, "speech")
+        .image(this.position.speachX, this.position.speachY, "speech")
         .setScale(0.15)
         .setDepth(9);
       this.reminder = this.add
-        .text(310, 154, `Hey !\nIt's one round left!`, {
-          fontSize: "18px",
-          color: "#ffffff",
-          align: "center",
-          padding: {
-            x: 10,
-            y: 5,
-          },
-        })
+        .text(
+          this.position.reminderX,
+          this.position.reminderY,
+          `Hey !\nIt's one round left!`,
+          {
+            fontSize: "18px",
+            color: "#ffffff",
+            align: "center",
+            padding: {
+              x: 10,
+              y: 5,
+            },
+          }
+        )
         .setDepth(10);
       this.time.delayedCall(3000, () => {
         if (this.reminder && this.speech) {
@@ -219,19 +290,24 @@ class HouseScene1 extends Phaser.Scene {
       });
     } else if (this.roundCount === 0) {
       this.speech = this.add
-        .image(420, 200, "speech")
+        .image(this.position.speachX, this.position.speachY, "speech")
         .setScale(0.15)
         .setDepth(9);
       this.reminder = this.add
-        .text(310, 154, `Hey!\nWelcome to Italy!`, {
-          fontSize: "18px",
-          color: "#ffffff",
-          align: "center",
-          padding: {
-            x: 10,
-            y: 5,
-          },
-        })
+        .text(
+          this.position.reminderX,
+          this.position.reminderY,
+          `Hey!\nWelcome to ${this.country}!`,
+          {
+            fontSize: "18px",
+            color: "#ffffff",
+            align: "center",
+            padding: {
+              x: 10,
+              y: 5,
+            },
+          }
+        )
         .setDepth(10);
 
       this.time.delayedCall(3000, () => {
@@ -243,19 +319,24 @@ class HouseScene1 extends Phaser.Scene {
       });
     } else if (this.roundCount < 4) {
       this.speech = this.add
-        .image(420, 200, "speech")
+        .image(this.position.speachX, this.position.speachY, "speech")
         .setScale(0.15)
         .setDepth(9);
       this.reminder = this.add
-        .text(310, 154, `Hey!\nWelcome back!`, {
-          fontSize: "18px",
-          color: "#ffffff",
-          align: "center",
-          padding: {
-            x: 10,
-            y: 5,
-          },
-        })
+        .text(
+          this.position.reminderX,
+          this.position.reminderY,
+          `Hey!\nWelcome back!`,
+          {
+            fontSize: "18px",
+            color: "#ffffff",
+            align: "center",
+            padding: {
+              x: 10,
+              y: 5,
+            },
+          }
+        )
         .setDepth(10);
 
       this.time.delayedCall(3000, () => {
@@ -276,10 +357,12 @@ class HouseScene1 extends Phaser.Scene {
     }
 
     if (this.countMatches < 5 && this.chestOpened === true) {
-      this.speech = this.add.image(420, 200, "speech").setScale(0.15);
+      this.speech = this.add
+        .image(this.position.speachX, this.position.speachY, "speech")
+        .setScale(0.15);
       this.reminder = this.add.text(
-        310,
-        154,
+        this.position.reminderX,
+        this.position.reminderY,
         `Hey ${username}!\nYou need to match\na words!`,
         {
           fontSize: "18px",
@@ -305,10 +388,12 @@ class HouseScene1 extends Phaser.Scene {
       this.journalTriggered === true &&
       this.leftWords.length === 0
     ) {
-      this.speech = this.add.image(420, 200, "speech").setScale(0.15);
+      this.speech = this.add
+        .image(this.position.speachX, this.position.speachY, "speech")
+        .setScale(0.15);
       this.reminder = this.add.text(
-        310,
-        154,
+        this.position.reminderX,
+        this.position.reminderY,
         `Hey ${username}!\nTry different houses\nbefore next round!`,
         {
           fontSize: "18px",
@@ -324,10 +409,12 @@ class HouseScene1 extends Phaser.Scene {
     }
 
     if (this.journalTriggered === true && this.chestOpened === false) {
-      this.speech = this.add.image(420, 200, "speech").setScale(0.15);
+      this.speech = this.add
+        .image(this.position.speachX, this.position.speachY, "speech")
+        .setScale(0.15);
       this.reminder = this.add.text(
-        310,
-        154,
+        this.position.reminderX,
+        this.position.reminderY,
         `Hey ${username}!\nI think you should\nlook in the box!`,
         {
           fontSize: "18px",
@@ -349,10 +436,12 @@ class HouseScene1 extends Phaser.Scene {
     }
 
     if (this.journalTriggered === false) {
-      this.speech = this.add.image(420, 200, "speech").setScale(0.15);
+      this.speech = this.add
+        .image(this.position.speachX, this.position.speachY, "speech")
+        .setScale(0.15);
       this.reminder = this.add.text(
-        310,
-        154,
+        this.position.reminderX,
+        this.position.reminderY,
         `Hey ${username}!\nI think you should\nlook in the book!`,
         {
           fontSize: "18px",
@@ -384,14 +473,30 @@ class HouseScene1 extends Phaser.Scene {
     if (this.journalTriggered) return;
 
     this.journalTriggered = true;
+
+    this.journal_Block = this.physics.add
+      .staticSprite(
+        this.position.jornalBlocX,
+        this.position.jornalBlockY,
+        "collision"
+      )
+      .setScale(7)
+      .setOffset(0, -15)
+      .refreshBody();
     this.Chest_exMark = this.physics.add
-      .staticSprite(540, 223, "exMark")
+      .staticSprite(
+        this.position.chestExMarkX,
+        this.position.chestExMarkY,
+        "exMark"
+      )
       .setScale(0.06)
       .setDepth(2)
       .refreshBody();
+
     this.chest = this.physics.add
-      .staticSprite(540, 223, "chest")
+      .staticSprite(this.position.chestX, this.position.chestY, "chest")
       .setScale(4)
+      .setOffset(0, -15)
       .refreshBody();
     this.physics.add.collider(
       this.player,
@@ -400,11 +505,7 @@ class HouseScene1 extends Phaser.Scene {
       null,
       this
     );
-    this.journal_Block = this.physics.add
-      .staticSprite(540, 223, "collision")
-      .setScale(7)
-      .setOffset(0, -15)
-      .refreshBody();
+
     this.physics.add.collider(
       this.player,
       this.journal_Block,
@@ -422,7 +523,7 @@ class HouseScene1 extends Phaser.Scene {
     this.journalImage = this.add.image(500, 310, "journal").setDepth(3);
     this.journalImage.displayWidth = 1200;
     this.journalImage.displayHeight = 1050;
-    fetch("https://eurolingo.onrender.com/api/italian", {
+    fetch(`https://eurolingo.onrender.com/api/${this.language}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     })
@@ -686,7 +787,6 @@ class HouseScene1 extends Phaser.Scene {
         y: 5,
       },
     });
-
     this.time.delayedCall(3000, () => {
       if (this.reminder && this.speech) {
         this.reminder.destroy();
@@ -702,7 +802,7 @@ class HouseScene1 extends Phaser.Scene {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          language: "italian",
+          language: "spanish",
         }),
       }).then((response) => {
         if (!response.ok) {
@@ -751,4 +851,4 @@ class HouseScene1 extends Phaser.Scene {
   }
 }
 
-export default HouseScene1;
+export default HouseBase;

@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import Phaser from "phaser";
 import { MainScene } from "./game/scenes/MainScene";
-import HouseScene1 from "./game/scenes/HouseScene1";
-import HouseScene2 from "./game/scenes/HouseScene2";
-import HouseScene3 from "./game/scenes/HouseScene3";
-import HouseScene4 from "./game/scenes/HouseScene4";
-import HouseScene5 from "./game/scenes/HouseScene5";
+import ItalianHouse from "./game/scenes/ItalianHouse";
+import SpanishHouse from "./game/scenes/SpanishHouse";
+import GermanHouse from "./game/scenes/GermanHouse";
+import FrenchHouse from "./game/scenes/FrenchHouse";
 import "./PhaserGame.css";
 import BridgeScene from "./game/scenes/BridgeScene";
 import CaveScene from "./game/scenes/CaveScene";
+import UkrainianHouse from "./game/scenes/UkrainianHouse";
 
 const PhaserGame = ({ username }) => {
   const gameContainer = useRef(null);
@@ -26,11 +26,11 @@ const PhaserGame = ({ username }) => {
       },
       scene: [
         MainScene,
-        HouseScene1,
-        HouseScene2,
-        HouseScene3,
-        HouseScene4,
-        HouseScene5,
+        ItalianHouse,
+        SpanishHouse,
+        GermanHouse,
+        UkrainianHouse,
+        FrenchHouse,
         BridgeScene,
         CaveScene,
       ],
