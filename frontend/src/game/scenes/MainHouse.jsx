@@ -29,6 +29,7 @@ class HouseBase extends Phaser.Scene {
     this.roundCount = 0;
     this.guideMessageDisplayed = false;
     this.countMatches = 0;
+    this.barrierRemoved = false;
   }
 
   preload() {
@@ -475,12 +476,8 @@ class HouseBase extends Phaser.Scene {
     this.journalTriggered = true;
 
     this.journal_Block = this.physics.add
-      .staticSprite(
-        this.position.jornalBlocX,
-        this.position.jornalBlockY,
-        "collision"
-      )
-      .setScale(7)
+      .staticSprite(this.position.chestX, this.position.chestY, "collision")
+      .setScale(9)
       .setOffset(0, -15)
       .refreshBody();
     this.Chest_exMark = this.physics.add
@@ -593,6 +590,8 @@ class HouseBase extends Phaser.Scene {
     this.back_btn.on("pointerdown", () => {
       this.cleanJournal();
       this.journal_Block.destroy();
+      this.barrier.destroy();
+      this.barrierRemoved = true;
     });
   }
 
