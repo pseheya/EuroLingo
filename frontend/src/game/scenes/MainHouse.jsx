@@ -1,13 +1,12 @@
 import Phaser from "phaser";
 import HouseCollisionBlocks from "../imports/houseCollisionBlocks";
+import House2CollisionBlocks from "../imports/house2CollisionBlocks";
 
 class HouseBase extends Phaser.Scene {
   constructor(
     key,
     language = "",
     country = "",
-    wigth = 0,
-    height = 0,
     musicFile = "",
     houseImage = "",
     position = {}
@@ -20,8 +19,6 @@ class HouseBase extends Phaser.Scene {
     this.houseImage = houseImage;
     this.musicFile = musicFile;
     this.language = language;
-    this.wigth = wigth;
-    this.height = height;
     this.position = position;
 
     this.leftWords = [];
@@ -68,6 +65,8 @@ class HouseBase extends Phaser.Scene {
   }
 
   create() {
+    this.welcomeFunction();
+
     const gameWidth = this.scale.width;
     const gameHeight = this.scale.height;
     //set up an music block
@@ -138,7 +137,10 @@ class HouseBase extends Phaser.Scene {
         this.doorArea,
         function (player, doorArea) {
           this.doorOpenSound.play();
-          this.scene.start("Main", { x: 500, y: 685 });
+          this.scene.start("Main", {
+            x: this.position.mainX,
+            y: this.position.mainY,
+          });
           this.countMatches = 0;
         },
 
@@ -162,7 +164,10 @@ class HouseBase extends Phaser.Scene {
         this.doorArea,
         function (player, doorArea) {
           this.doorOpenSound.play();
-          this.scene.start("Main", { x: 1100, y: 375 });
+          this.scene.start("Main", {
+            x: this.position.mainX,
+            y: this.position.mainY,
+          });
           this.countMatches = 0;
         },
         null,

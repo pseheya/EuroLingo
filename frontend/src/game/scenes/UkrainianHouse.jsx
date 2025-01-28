@@ -1,12 +1,12 @@
 import HouseBase from "./MainHouse";
 
-class ItalianHouse extends HouseBase {
+class UkrainianHouse extends HouseBase {
   constructor() {
     super(
-      "ItalianHouse",
-      "italian",
-      "Italy",
-      "assets/italySong.mp3",
+      "UkrainianHouse",
+      "ukrainian",
+      "Ukraine",
+      "assets/ukrSong.mp3",
       "house2",
       {
         playerX: 350,
@@ -25,11 +25,11 @@ class ItalianHouse extends HouseBase {
         chestExMarkY: 223,
         chestX: 540,
         chestY: 223,
-        mainX: 500,
-        mainY: 685,
+        mainX: 1185,
+        mainY: 1135,
       }
     );
   }
 }
 
-export default ItalianHouse;
+export default UkrainianHouse;

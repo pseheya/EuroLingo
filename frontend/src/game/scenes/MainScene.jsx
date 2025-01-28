@@ -305,28 +305,28 @@ export class MainScene extends Phaser.Scene {
       .setSize(40, 60)
       .setOrigin(1, 1);
     door2.visible = false;
-    door2.setData("targetScene", "House2");
+    door2.setData("targetScene", "SpanishHouse");
 
     const door3 = this.doorArea
       .create(1315, 700, "collision")
       .setSize(40, 60)
       .setOrigin(1, 1);
     door3.visible = false;
-    door3.setData("targetScene", "House3");
+    door3.setData("targetScene", "GermanHouse");
 
     const door4 = this.doorArea
       .create(1225, 1125, "collision")
       .setSize(40, 60)
       .setOrigin(1, 1);
     door4.visible = false;
-    door4.setData("targetScene", "House4");
+    door4.setData("targetScene", "UkrainianHouse");
 
     const door5 = this.doorArea
       .create(535, 1270, "collision")
       .setSize(40, 60)
       .setOrigin(1, 1);
     door5.visible = false;
-    door5.setData("targetScene", "House5");
+    door5.setData("targetScene", "FrenchHouse");
 
     const teleport = this.teleport
       .create(1985, 850, "collision")
