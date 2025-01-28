@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Phaser from "phaser";
 import { MainScene } from "./game/scenes/MainScene";
-import HouseScene1 from "./game/scenes/HouseScene1";
+import ItalianHouse from "./game/scenes/ItalianHouse";
 import HouseScene2 from "./game/scenes/HouseScene2";
 import HouseScene3 from "./game/scenes/HouseScene3";
 import HouseScene4 from "./game/scenes/HouseScene4";
@@ -26,7 +26,7 @@ const PhaserGame = ({ username }) => {
       },
       scene: [
         MainScene,
-        HouseScene1,
+        ItalianHouse,
         HouseScene2,
         HouseScene3,
         HouseScene4,
