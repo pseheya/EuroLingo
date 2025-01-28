@@ -19,8 +19,6 @@ class UkrainianHouse extends HouseBase {
         speachY: 200,
         reminderX: 310,
         reminderY: 154,
-        jornalBlocX: 540,
-        journalBlockY: 223,
         chestExMarkX: 540,
         chestExMarkY: 223,
         chestX: 540,

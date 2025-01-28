@@ -19,8 +19,6 @@ class SpanishHouse extends HouseBase {
         speachY: 300,
         reminderX: 310,
         reminderY: 254,
-        jornalBlocX: 460,
-        journalBlockY: 450,
         chestExMarkX: 460,
         chestExMarkY: 450,
         chestX: 460,

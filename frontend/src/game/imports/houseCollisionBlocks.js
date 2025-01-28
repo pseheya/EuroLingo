@@ -3,67 +3,30 @@ export default class HouseCollisionBlocks {
     this.scene = scene;
     this.HouseCollisionBlocks = scene.physics.add.staticGroup();
 
-    this.HouseCollisionBlocks.create(910, 600, "collision")
-      .setSize(10, 50)
-      .setOrigin(1, 1)
-      .setVisible(false);
-    this.HouseCollisionBlocks.create(510, 190, "collision")
-      .setSize(400, 1)
-      .setOrigin(1, 1)
-      .setVisible(false);
-    this.HouseCollisionBlocks.create(610, 375, "collision")
-      .setSize(200, 1)
-      .setOrigin(1, 1)
-      .setVisible(false);
-    this.HouseCollisionBlocks.create(348, 510, "collision")
-      .setSize(250, 1)
-      .setOrigin(1, 1)
-      .setVisible(false);
-
-    this.HouseCollisionBlocks.create(275, 300, "collision")
-      .setSize(1, 500)
-      .setOrigin(1, 1)
-      .setVisible(false);
-
-    this.HouseCollisionBlocks.create(505, 448, "collision")
-      .setSize(1, 150)
-      .setOrigin(1, 1)
-      .setVisible(false);
-
-    this.HouseCollisionBlocks.create(338, 485, "collision")
-      .setSize(100, 30)
-      .setOrigin(1, 1)
-      .setVisible(false);
-
-    this.HouseCollisionBlocks.create(300, 400, "collision")
-      .setSize(40, 100)
-      .setOrigin(1, 1)
-      .setVisible(false);
-
-    this.HouseCollisionBlocks.create(680, 280, "collision")
-      .setSize(40, 120)
-      .setOrigin(1, 1)
-      .setVisible(false);
-    this.HouseCollisionBlocks.create(570, 220, "collision")
-      .setSize(130, 40)
-      .setOrigin(1, 1)
-      .setVisible(false);
-
-    this.HouseCollisionBlocks.create(320, 225, "collision")
-      .setSize(50, 50)
-      .setOrigin(1, 1)
-      .setVisible(false);
-
-      this.HouseCollisionBlocks.create(390, 220, "collision")
-      .setSize(40, 50)
-      .setOrigin(1, 1)
-      .setVisible(false);
-
-      this.HouseCollisionBlocks.create(470, 485, "collision")
-      .setSize(30, 30)
-      .setOrigin(1, 1)
-      .setVisible(false);
+    // array of parameters for collisions
+    const collisionConfigs = [
+      { x: 910, y: 600, size: { width: 10, height: 50 } },
+      { x: 510, y: 190, size: { width: 400, height: 1 } },
+      { x: 610, y: 375, size: { width: 200, height: 1 } },
+      { x: 348, y: 510, size: { width: 250, height: 1 } },
+      { x: 275, y: 300, size: { width: 1, height: 500 } },
+      { x: 505, y: 448, size: { width: 1, height: 150 } },
+      { x: 338, y: 485, size: { width: 100, height: 30 } },
+      { x: 300, y: 400, size: { width: 40, height: 100 } },
+      { x: 680, y: 280, size: { width: 40, height: 120 } },
+      { x: 570, y: 220, size: { width: 130, height: 40 } },
+      { x: 320, y: 225, size: { width: 50, height: 50 } },
+      { x: 390, y: 220, size: { width: 40, height: 50 } },
+      { x: 470, y: 485, size: { width: 30, height: 30 } },
+    ];
+    collisionConfigs.forEach(({ x, y, size }) => {
+      this.HouseCollisionBlocks.create(x, y, "collision")
+        .setSize(size.width, size.height)
+        .setOrigin(1, 1)
+        .setVisible(false);
+    });
   }
+
   getHouseBlocks() {
     return this.HouseCollisionBlocks;
   }
