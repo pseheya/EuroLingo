@@ -3,4 +3,3 @@ node_modules
 .env.development
 .env.computer
 seeding-dev-data.ts
-hello
